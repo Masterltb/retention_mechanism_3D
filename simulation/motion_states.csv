@@ -1,0 +1,6 @@
+phase,upper,upper_lock,lower,lower_lock,expected_stack_upper,expected_stack_lower,guard
+0_ready,closed,engaged,closed,engaged,4,1,confirm_both_locks
+1_release_bottom,closed,engaged,open,disengaged,4,0,confirm_upper_lock_before_lower_moves
+2_bottom_reclose,closed,engaged,closed,engaged,4,0,confirm_bottom_lock_and_bowl_exit
+3_refill_lower,open,disengaged,closed,engaged,3,1,confirm_lower_lock_before_upper_moves
+4_upper_reclose,closed,engaged,closed,engaged,3,1,confirm_upper_lock

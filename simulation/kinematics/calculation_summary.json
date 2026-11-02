@@ -1,0 +1,10 @@
+{
+  "closed_free_arc_gap_mm": 61.91289809715387,
+  "open_free_arc_gap_mm": 82.8078497648709,
+  "contact_arc_fraction_closed": 0.26096921700198705,
+  "servo_stall_torque_6v_Nm": 1.0791000000000002,
+  "servo_screen_continuous_torque_6v_Nm": 0.32373,
+  "cam_lead_mm_per_rad": 19.098593171027442,
+  "no_load_servo_motion_time_s_at_6v_candidate_gear": 0.56,
+  "status": "screening only; friction, anti-tilt support, cam and continuous torque must be measured"
+}
