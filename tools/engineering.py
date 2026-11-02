@@ -49,6 +49,9 @@ def check():
             fail("SQLite integrity_check failed")
         if cx.execute("PRAGMA foreign_key_check").fetchone():
             fail("SQLite foreign_key_check failed")
+        dump = ROOT / "BOM/history_dump.sql"
+        if not dump.is_file() or dump.read_text(encoding="utf-8") != "\n".join(cx.iterdump()) + "\n":
+            fail("SQL backup is stale; run py tools/engineering.py snapshot")
         for story, artifact in cx.execute("SELECT id, artifact FROM story WHERE artifact IS NOT NULL"):
             if not (ROOT / artifact).exists():
                 fail("Missing artifact for " + story + ": " + artifact)
@@ -72,6 +75,7 @@ def phase_gate(phase_id):
             measured = (p["bowl"]["nested_rim_pitch"], p["bowl"]["rim_underside_profile"],
                         p["analysis_assumptions_not_validated"]["measured_static_mu"],
                         p["analysis_assumptions_not_validated"]["measured_kinetic_mu"],
+                        p["analysis_assumptions_not_validated"]["measured_servo_running_torque_6v_Nm"],
                         p["analysis_assumptions_not_validated"]["print_design_allowable_bending_MPa"])
             if any(x is None for x in measured):
                 fail("P0 physical measurements are incomplete")

@@ -2,7 +2,7 @@
 
 ## 1. Nguồn sự thật và giới hạn release
 
-`requirements/parameters.json` chứa tham số đo và giả định; `requirements/requirements.md` có ID R-xx. `BOM/history.sqlite` lưu phase/story/bug/event/BOM; `BOM/history_dump.sql` là backup dạng text có thể khôi phục. Mỗi story trỏ tới ID yêu cầu, phase, artifact và tiêu chí nghiệm thu. Mỗi bằng chứng thử phải có đường dẫn lưu trong repo hoặc kho lưu trữ được ghi rõ. Bản vẽ và STEP/STL trong `exports/` là **concept** cho đến khi P4 được duyệt; không đổi tên file thành “production” trước khi P0–P3 đạt.
+`requirements/parameters.json` chứa tham số đo và giả định; `requirements/requirements.md` có ID R-xx. `BOM/history.sqlite` lưu phase/story/bug/event/BOM; `BOM/history_dump.sql` là backup dạng text có thể khôi phục. Lệnh `check` buộc dump khớp database hiện tại. Mỗi story trỏ tới ID yêu cầu, phase, artifact và tiêu chí nghiệm thu. Mỗi bằng chứng thử phải có đường dẫn lưu trong repo hoặc kho lưu trữ được ghi rõ. Bản vẽ và STEP/STL trong `exports/` là **concept** cho đến khi P4 được duyệt; không đổi tên file thành “production” trước khi P0–P3 đạt.
 
 ## 2. Chu kỳ làm việc cho từng story
 
