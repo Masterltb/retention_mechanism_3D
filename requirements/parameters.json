@@ -1,0 +1,11 @@
+{
+  "units": "mm, N, kg",
+  "topology": {"column_count_in_this_model": 1, "holding_mechanisms_per_column": 2, "motors_per_column": 2},
+  "bowl": {"rim_outer_diameter": 175.7, "base_outer_diameter": 90.0, "height": 70.0, "maximum_mass_each_kg": 1.0, "stack_count": 5, "nested_rim_pitch": null, "rim_underside_profile": null},
+  "gates": {"count": 2, "upper_stack_count": 4, "lower_stack_count": 1, "closed_clear_aperture_diameter": 160.0, "open_clear_aperture_diameter": 200.0, "jaw_count": 6, "jaw_radial_travel": 20.0, "jaw_tangential_width": 22.0, "jaw_radial_length": 18.0, "jaw_thickness": 6.0, "nominal_light_clamp_clearance": 0.1, "gate_center_spacing": 30.0},
+  "frame": {"outside_diameter": 242.0, "ring_inside_diameter": 202.0, "plate_thickness": 8.0, "structural_post_pcd": 222.0, "structural_post_diameter": 8.0, "guide_post_pcd": 188.7, "guide_post_diameter": 10.0, "guide_post_height": 320.0},
+  "hardware": {"servo_model": "MG996R 360 continuous rotation, user supplied variant", "servo_body_envelope": [40.7, 19.7, 42.9], "servo_mass_g": 55.0, "servo_voltage_range_V": [4.8, 7.2], "servo_temperature_range_C": [0, 55], "servo_stall_torque_kgf_cm": {"4.8V": 9.4, "6V": 11.0}, "servo_no_load_seconds_per_60deg": {"4.8V": 0.17, "6V": 0.14}, "servo_gear_material": "metal", "servo_gearbox_description": "partly metal per user", "servo_mount_clearance_each_side": 0.6, "servo_mount_hole_nominal": 3.2, "brass_standoff_thread": "M3", "brass_standoff_hex_af": 5.5, "printed_standoff_hole_pilot": 3.4, "printed_post_hole_diameter": 8.4},
+  "print": {"material_candidate": "PETG or PA-CF; verify with coupons", "radial_sliding_clearance_each_side": 0.35, "pin_clearance_diameter": 0.3, "minimum_wall": 3.0},
+  "safety": {"static_load_factor": 3.0, "upper_design_mass_kg": 4.0, "lower_design_mass_kg": 1.0, "fault_mass_on_one_mechanism_kg": 5.0, "minimum_engaged_jaws_off_center": 3},
+  "analysis_assumptions_not_validated": {"contact_eccentricity_from_guide_mm": 10.0, "anti_tilt_bearing_separation_mm": 8.0, "cam_motion_angle_deg": 60.0, "cam_efficiency": 0.65, "candidate_gear_reduction": 4.0, "candidate_gear_efficiency": 0.75, "continuous_torque_fraction_of_stall_for_screening": 0.3, "friction_sensitivity_mu": [0.1, 0.2, 0.3, 0.4], "measured_static_mu": null, "measured_kinetic_mu": null, "print_design_allowable_bending_MPa": null}
+}
