@@ -1,0 +1,13 @@
+# Generated local files; committed design exports remain versioned.
+__pycache__/
+*.py[cod]
+*.FCBak
+*.FCStd1
+*.FCStd2
+*.log
+.venv/
+.pytest_cache/
+BOM/*.sqlite-journal
+BOM/*.sqlite-wal
+BOM/*.sqlite-shm
+exports/renders/*.tmp

@@ -1,0 +1,10 @@
+*.md text eol=lf
+*.json text eol=lf
+*.csv text eol=lf
+*.sql text eol=lf
+*.py text eol=lf
+*.svg text eol=lf
+*.FCStd binary
+*.step binary
+*.stl binary
+*.sqlite binary
