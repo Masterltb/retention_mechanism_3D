@@ -2,7 +2,11 @@
 
 ## Đầu vào đã biết
 
-Tô: đường kính miệng **175,7 mm**, đáy **90 mm**, cao **70 mm**. **Mỗi cột tô có 2 cơ chế giữ xếp chồng đồng trục**: cơ chế trên giữ các tô còn lại, cơ chế dưới nhả từng tô. Một cột tối đa 5 tô, giả thiết tải lớn nhất **1 kg/tô**. Hai cơ chế của cùng một cột nối bằng 4 trụ chịu lực. Mỗi cơ chế dùng một MG996R 360°, tức **2 servo/cột**. Bốn thanh dẫn phía trên bắt bằng vít/trụ đồng. Mô hình CAD hiện có **1 cột**; nếu máy có nhiều cột thì mỗi cột lặp lại cụm hai cơ chế này. Ảnh tham chiếu là ý tưởng hình học, không phải bản vẽ có kích thước kiểm chứng. Hình cuối có số 80/60 nhưng không rõ đơn vị và vị trí liên quan, nên không dùng làm kích thước cơ cấu.
+Máy có **2 line bán 2 loại tô khác nhau**. Mỗi line được nạp các tô đã đóng gói hoàn chỉnh bên ngoài, gồm cả nắp; máy không đóng nắp. Mỗi line cần một module FIFO riêng gồm hai cơ chế giữ đồng trục. CAD hiện là module một line để tái sử dụng; chưa bố trí khoảng cách giữa hai line vì kích thước gói L2 còn thiếu.
+
+Line L1: thân tô cao **70 mm không gồm phần nắp nhô**, đường kính miệng danh nghĩa **175,7 mm**, đáy **90 mm**. Mỗi line tối đa **5 gói**. Người dùng ước tính mỗi tô khoảng **0,8 kg**; khối lượng package gồm nắp/seal chưa cân. Tạm giữ **1,0 kg/gói** làm giới hạn thiết kế screening cho tới khi cân package đầy đủ. Cần đo đường bao **gói hoàn chỉnh có nắp**, bước chồng gói, khối lượng gói và bề mặt chịu lực. Không dùng chiều cao tô trần hoặc bước lồng tô trần để đặt tầng. L2 có hình dạng/kích thước khác và chưa đo. Ảnh là tham khảo hình dáng, không cho phép suy ra dung sai.
+
+Mỗi line có 2 cơ chế giữ: trên giữ các gói còn lại, dưới nhả gói cuối. Mỗi module hiện dự kiến dùng hai servo, tổng cộng bốn servo cho hai line. Bốn cột dẫn của module phải đặt theo đường bao gói lớn nhất và có chỉnh tâm/khe hở.
 
 ## Yêu cầu truy vết
 
@@ -12,9 +16,9 @@ Tô: đường kính miệng **175,7 mm**, đáy **90 mm**, cao **70 mm**. **M�
 | R-02 | Tầng trên giữ 4 tô khi tầng dưới mở | Thử tải tĩnh và lệch tâm |
 | R-03 | Tầng dưới chỉ mở khi tầng trên đã đóng và khóa | Công tắc xác nhận + thử ngắt điện |
 | R-04 | Hai tầng không đồng thời mở | Liên động điện và cơ, thử lỗi cảm biến |
-| R-05 | Tự giữ khi mất điện, không tải ngược lên trục servo | Chốt lò xo vào vành cam, thử mất điện có tải |
+| R-05 | Tự giữ khi mất điện, không tải ngược lên trục servo | Pin khóa lò xo vào tai vòng đồng bộ có bạc kim loại; xác nhận pin, thử mất điện có tải |
 | R-06 | Đường kính thông thủy mục tiêu khi đóng ≈160 mm; khi mở ≥200 mm | Đo trên mẫu in |
-| R-07 | Kẹp hờ mục tiêu 0,1 mm chỉ sau hiệu chuẩn | Đo dung sai thực của tô và mẫu in |
+| R-07 | Dẫn hướng tô không kẹt; khe guốc chỉnh theo package đo, không ép biến dạng | Đo 10 package và kiểm tra ở hai đầu chỉnh |
 | R-08 | 4 thanh dẫn giữ cột tô không kẹt | Thử rơi 4 tô, có lệch tâm có kiểm soát |
 | R-09 | Lắp được MG996R và vít/trụ đồng M3 | Đo servo, vít, trụ thật trước khi in |
 | R-10 | Tính khoảng trống giữa guốc, tải cánh, lực lật và ma sát theo từng trạng thái | Chạy `tools/calculate_mechanics.py`, kiểm tra bằng lực kế/coupon |
@@ -23,13 +27,13 @@ Tô: đường kính miệng **175,7 mm**, đáy **90 mm**, cao **70 mm**. **M�
 
 ## Dữ liệu còn phải đo trên vật thật
 
-1. Bước lồng tô: khoảng cách hai mép miệng liên tiếp trong cột 5 tô. Thay `nested_rim_pitch: null` trong JSON; khoảng cách 2 tầng phải chỉnh theo giá trị này, **không được dùng mặc định 30 mm để chế tạo**.
-2. Mặt cắt gờ miệng, độ dày, bán kính góc dưới gờ và độ biến thiên đường kính của ít nhất 10 tô. Xác định mặt thực sự đặt lên 6 gờ đỡ.
+1. Với mỗi line, đo 10 **gói hoàn chỉnh có nắp**: đường kính/kích thước lớn nhất tại nhiều cao độ, chiều cao tổng, khối lượng và độ méo. Xếp 10 gói không nén; đo bước tiếp xúc thực và độ nghiêng. Khoảng cách 2 tầng phải dựa trên gói, **không dùng mặc định 30 mm để chế tạo**.
+2. Với L1/L2, ghi riêng biên dạng vùng chịu lực của package. Chỉ dùng mặt dưới vành tô làm mặt đỡ nếu gói/nắp không che vùng đó và phép thử tải chứng minh vùng này chịu được lực.
 3. Kích thước MG996R đang sở hữu: thân, tai, lỗ bắt vít, trục, khoảng xoay và dạng 360° thật (quay liên tục hay có phản hồi góc).
 4. Kích thước trụ đồng: ren M3, chiều dài, phần lục giác, cách khóa ren. Lỗ in được hiệu chuẩn bằng mẫu coupon.
-5. Kích thước buồng máy và khoảng không phía dưới để tô rơi; số 80/60 trong ảnh chưa đủ thông tin.
+5. Kích thước bao của hai line, khoảng cách giữa line, bề rộng buồng máy và khoảng không bên dưới để gói rơi; số 80/60 trong ảnh chưa đủ thông tin.
 6. Hệ số ma sát tĩnh/động đúng vật liệu và bề mặt in; lực kéo của guốc ở các tải khác nhau. Đến khi đo, `μ=0,1…0,4` chỉ là dải khảo sát.
 
 ## Điều kiện chưa được nghiệm thu
 
-Mẫu CAD là bố trí không gian và nguyên lý tải. Chưa có biên dạng cam, bánh răng, hình học khóa và liên động đã được kiểm chứng để vận hành 5 kg. Không chạy máy bán hàng với thực phẩm hoặc với người đứng dưới cơ cấu trước khi qua checklist trong `simulation/validation/acceptance.md`.
+Prototype một line trong `cad/assembly/` hiện có cánh bản lề, bánh răng 72:12, pin khóa lò xo Ø6 mm, bạc lót và chặn cơ PETG. Biên dạng răng là xấp xỉ; actuator rút pin, công tắc, liên động, vật liệu in và chịu tải chưa được kiểm chứng. Bước hai tầng 75 mm và profile gói vẫn là giả định. Không chạy máy bán hàng hoặc đặt người dưới tải trước khi qua checklist trong `simulation/validation/acceptance.md`.

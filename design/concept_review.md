@@ -1,30 +1,29 @@
-# Đánh giá concept v0.1
+# Đánh giá concept hiện tại — một line, hai tầng
 
-## Cấu hình
+## Cấu hình đang phát triển
 
-Một cột tô đi qua hai cơ chế giữ đồng trục. Mỗi cơ chế gồm vòng khung cố định, 6 guốc trượt hướng tâm có gờ đỡ dưới miệng tô, và vành cam xoay. Bốn trụ đường kính 8 mm liên kết hai cơ chế của cùng một cột để truyền tải; 4 thanh dẫn đường kính 10 mm ở phía trên định tâm cột tô. Mỗi cơ chế có một servo gắn ở hông vào khung, điều khiển vành cam qua truyền động cần thiết kế chi tiết. Chốt lò xo khóa vành cam khi đóng; vấu chặn cơ giới hạn hành trình. Tải đứng đi qua guốc → khung → 4 trụ, không đi qua servo.
+Mỗi line có hai vòng carrier đồng trục; mỗi tầng có sáu cánh bản lề do servo MG996R quay đảo chiều bằng PWM điều khiển qua pinion 12T/vòng đồng bộ 72T và thanh nối. **Không dùng cam.** Mỗi trục cánh chạy trên bearing 625-2RS. Tải đứng đi qua cánh, bearing/trục bản lề, carrier và bốn trụ kim loại Ø12 mm; servo chỉ tạo chuyển động. Hai chặn cơ giới hạn đầu hành trình; chốt thép lò xo Ø6 mm khóa tai vòng có bạc OD8/ID6,2 mm khi đóng.
 
-CAD `cad/scripts/build_freecad.py` dựng bố trí 3D có kích thước thật cho vòng, guốc, trụ, thanh dẫn, bệ servo và khối bao servo. Lỗ trụ Ø8,4, lỗ pilot M3 Ø3,4 và lỗ bệ servo Ø3,2 là kích thước khởi điểm để in coupon, chưa phải dung sai đã kiểm chứng. **Vành cam, rãnh cam, liên kết truyền động servo và chốt lò xo mới là envelope/placeholder**, chưa phải chi tiết sản xuất. Chúng được hiển thị để kiểm tra không gian, không xuất STL sản xuất.
+Tháp khóa PETG được bắt hai bu-lông xuyên M5; actuator rút pin và công tắc xác nhận vẫn cần lựa chọn/thiết kế chi tiết. Tầng đối diện phải đóng, chịu tải và xác nhận pin trước khi mở tầng còn lại. Servo liên tục không xác định được góc chỉ bằng PWM; cần limit switch độc lập, timeout và liên động.
 
-## Chu kỳ dự kiến
+CAD hiện tại là [prototype PETG gia cường](petg_reinforced_prototype.md), không phải bản vẽ sản xuất. Carrier dày 8 mm, cánh dày 8 × 26 mm, trụ dẫn kim loại Ø12 mm trên PCD292, khung Ø320 mm. Bao tô đầu vào L1 là 175,7/90/70 mm theo người dùng; package Ø181,7 × 75 mm vẫn là ước lượng. CSV đo 10 package còn trống.
 
-1. Ban đầu: trên đóng + xác nhận khóa, dưới đóng + xác nhận khóa.
-2. Trên giữ 4 tô. Dưới mở, nhả 1 tô; cảm biến xác nhận tô đã qua vùng nhả.
-3. Dưới đóng và khóa, cảm biến xác nhận; chỉ khi đó trên mở.
-4. Bốn tô hạ xuống một bước lồng tô; tầng dưới đỡ tô kế tiếp, thanh dẫn giới hạn lệch tâm.
-5. Trên đóng để giữ 3 tô còn lại và khóa; sẵn sàng chu kỳ sau.
+## Chu kỳ FIFO đề xuất
 
-Nếu cơ chế trên nhả cả 4 tô từ độ cao không kiểm soát, va đập sẽ lớn. Bước lồng thực phải khớp khoảng cách giữa tầng; cần cảm biến tới vị trí, giới hạn hành trình và thử vận tốc rơi. Khi mất điện ở lúc chuyển trạng thái, khóa phải về trạng thái chịu tải hoặc hệ phải có phương án thu hồi an toàn.
+1. Xác nhận trên và dưới đóng, pin khóa gài.
+2. Giữ chồng tô bằng tầng trên; chỉ rút khóa dưới rồi mở tầng dưới để nhả một tô.
+3. Xác nhận tô đã qua; đóng tầng dưới, nhả lệnh actuator để pin gài và xác nhận pin.
+4. Chỉ khi tầng dưới báo khóa và nhận tải, tầng trên mới được phép chuyển trạng thái theo logic điều khiển.
+5. Mọi timeout, mất cảm biến hoặc chuyển động bất thường đều dừng servo và không mở tầng kia.
 
-## Điểm quyết định trước bản vẽ sản xuất
+## Rủi ro còn mở
 
-| Vấn đề | Cách đóng quyết định |
+| Rủi ro | Cách kiểm chứng |
 |---|---|
-| Biên dạng gờ miệng | Đo 10 tô, chọn guốc có mặt tỳ đủ rộng và không nghiền mép |
-| Vành cam và truyền động | Tính lực/rãnh, góc quay, răng hoặc dây đai, in và thử một tầng |
-| Chốt khóa | Thiết kế chốt kim loại/lò xo, kiểm chứng khi mất điện ở mọi góc |
-| Tải động | Thử thả 4 tô nặng giả, đo lực/biến dạng |
-| Vật liệu | Coupon PETG hoặc PA-CF; kiểm tra creep 72 giờ và điều kiện nhiệt |
+| Bước 75 mm/biên dạng gờ sai so với tô thật | Đo 10 package, cập nhật STEP và thử chồng không nén |
+| PETG creep/nứt chân cánh hoặc tháp khóa | Coupon, proof-load theo tải 147 N/tầng, 72 h và chu kỳ |
+| Chốt khóa không rút/gài khi có lực phản lực | Đo lực rút pin, độ ăn khớp, spring return, sensor confirm, power-loss test |
+| MG996R hụt lực/nóng | Đo torque–tốc độ và nhiệt trên servo thật; stall torque không phải torque liên tục |
+| Tải lệch/tô nghiêng làm dồn lực vào 1–2 cánh | Cảm biến lực tại điểm đỡ và proof-load lệch tâm |
 
-Liên kết: yêu cầu `R-01…R-09` ở `requirements/requirements.md`; phép tính ở `design/calculations.md`; trạng thái ở `simulation/motion_states.csv`; công việc ở SQLite `BOM/history.sqlite`.
-Phần tính ma sát/tải và các giới hạn của 6 guốc hiện có ở `design/friction_analysis.md`; sơ đồ lực tại `exports/drawings/force_path_concept.svg`. Yêu cầu mới `R-10…R-12` ở cùng file requirements.
+Xem [bảng tải PETG](petg_reinforced_prototype.md), [review production](production_readiness_review.md), [bản kiểm tra FreeCAD](../simulation/validation/pivot_prototype_check.md), và `simulation/validation/acceptance.md`.

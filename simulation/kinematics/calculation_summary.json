@@ -1,10 +1,14 @@
 {
-  "closed_free_arc_gap_mm": 61.91289809715387,
-  "open_free_arc_gap_mm": 82.8078497648709,
-  "contact_arc_fraction_closed": 0.26096921700198705,
-  "servo_stall_torque_6v_Nm": 1.0791000000000002,
-  "servo_screen_continuous_torque_6v_Nm": 0.32373,
-  "cam_lead_mm_per_rad": 19.098593171027442,
-  "no_load_servo_motion_time_s_at_6v_candidate_gear": 0.56,
-  "status": "screening only; friction, anti-tilt support, cam and continuous torque must be measured"
+  "closed_free_arc_gap_mm": 58.001099369714936,
+  "open_free_arc_gap_mm": 78.86475431003115,
+  "contact_arc_fraction_closed": 0.307662874790924,
+  "flap_section_modulus_mm3": 277.3333333333333,
+  "flap_bending_span_mm": 18.0,
+  "flap_contact_arm_mm_estimated": 26.150000000000006,
+  "ring_pinion_reduction": 6.0,
+  "gear_efficiency_assumed": 0.75,
+  "servo_stall_torque_6v_Nm_vendor": 1.0791000000000002,
+  "servo_screen_torque_6v_Nm_30pct_stall_not_continuous_rating": 0.32373,
+  "static_design_factor_K": 3.0,
+  "status": "pivot-flap screening only; mu, contact lever, joint torque, torque-speed, PETG allowable and dynamic loads are not validated"
 }

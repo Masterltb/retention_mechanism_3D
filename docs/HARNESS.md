@@ -11,7 +11,7 @@ py tools/harness.py init
 py tools/harness.py status
 py tools/harness.py set S-002 doing
 py tools/harness.py event S-002 implement "Dựng vòng và 6 guốc mỗi tầng" --artifact cad/scripts/build_freecad.py
-py tools/harness.py bug S-004 high "Cam chưa có profile lực" --evidence design/concept_review.md
+py tools/harness.py bug S-004 high "Pin khóa chưa kiểm chứng dưới tải" --evidence design/petg_reinforced_prototype.md
 ```
 
 **Mỗi vòng làm việc:** xem `status` → chọn 1 story → sửa artifact → chạy kiểm tra liên quan → ghi `event` có kết quả → đổi trạng thái nếu đạt acceptance → cập nhật bug nếu phát hiện. Phase chuyển `done` chỉ khi mọi story trong phase đạt tiêu chí. Việc hiện tại: P0/P1. Việc tiếp theo: P2/P3/P4. Lịch sử event giữ tối đa một câu kết luận + đường dẫn, giúp đọc nhanh mà không tiêu tốn context.

@@ -1,0 +1,3 @@
+objects=109
+shape_objects=107
+invalid_shapes=0

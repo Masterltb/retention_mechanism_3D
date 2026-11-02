@@ -1,0 +1,76 @@
+"""Set readable default visibility, color and camera for both assembly states."""
+import FreeCAD as App
+import FreeCADGui as Gui
+from pathlib import Path
+import traceback
+
+root = Path(__file__).resolve().parents[2]
+assembly_dir = root / "cad" / "assembly"
+preview_dir = root / "exports" / "preview"
+preview_dir.mkdir(parents=True, exist_ok=True)
+log = []
+
+def style(doc):
+    for obj in doc.Objects:
+        if not hasattr(obj, "Shape") or obj.Shape.isNull():
+            continue
+        obj.ViewObject.Visibility = True
+        try:
+            obj.ViewObject.DisplayMode = "Shaded"
+        except Exception:
+            pass
+        if "ENVELOPE" in obj.Name:
+            obj.ViewObject.Transparency = 82
+        if "hinged_flap" in obj.Name:
+            obj.ViewObject.ShapeColor = (0.92, 0.49, 0.13)
+        elif "geared_sync_ring" in obj.Name:
+            obj.ViewObject.ShapeColor = (0.18, 0.56, 0.36)
+        elif "servo_pinion" in obj.Name:
+            obj.ViewObject.ShapeColor = (0.76, 0.24, 0.16)
+        elif "sync_link" in obj.Name:
+            obj.ViewObject.ShapeColor = (0.25, 0.42, 0.68)
+        elif "fixed_carrier" in obj.Name:
+            obj.ViewObject.ShapeColor = (0.58, 0.62, 0.67)
+        elif "guide_post" in obj.Name or "structure_post" in obj.Name:
+            obj.ViewObject.ShapeColor = (0.36, 0.52, 0.62)
+    doc.getObject("PackageEnvelopes").ViewObject.Visibility = False
+    doc.getObject("ControlEnvelopes").ViewObject.Visibility = False
+
+for state in ("closed", "open"):
+    path = assembly_dir / ("one_line_pivot_prototype_%s.FCStd" % state)
+    try:
+        doc = App.openDocument(str(path))
+        doc.recompute()
+        style(doc)
+        Gui.activeDocument().activeView().viewAxonometric()
+        Gui.activeDocument().activeView().fitAll()
+        Gui.activeDocument().activeView().redraw()
+        doc.save()
+        image_path = preview_dir / ("one_line_%s.png" % state)
+        Gui.activeDocument().activeView().saveImage(str(image_path), 1600, 1000, "Current")
+        valid = sum(1 for o in doc.Objects if hasattr(o, "Shape") and not o.Shape.isNull() and o.Shape.isValid())
+        invalid = sum(1 for o in doc.Objects if hasattr(o, "Shape") and not o.Shape.isNull() and not o.Shape.isValid())
+        (preview_dir / ("one_line_%s_validation.txt" % state)).write_text(
+            "objects=%d\nshape_objects=%d\ninvalid_shapes=%d\n" % (len(doc.Objects),valid,invalid),
+            encoding="utf-8",
+        )
+        log.append("%s OK objects=%d valid_shapes=%d preview=%s" % (state, len(doc.Objects), valid, image_path))
+        App.closeDocument(doc.Name)
+    except Exception:
+        log.append("%s ERROR\n%s" % (state, traceback.format_exc()))
+        try:
+            App.closeDocument(doc.Name)
+        except Exception:
+            pass
+
+try:
+    doc = App.openDocument(str(assembly_dir / "one_line_pivot_prototype_closed.FCStd"))
+    doc.recompute()
+    style(doc)
+    Gui.activeDocument().activeView().viewAxonometric()
+    Gui.activeDocument().activeView().fitAll()
+    Gui.activeDocument().activeView().redraw()
+    doc.save()
+except Exception:
+    log.append("final open ERROR\n%s" % traceback.format_exc())
+(preview_dir / "view_macro_log.txt").write_text("\n".join(log), encoding="utf-8")

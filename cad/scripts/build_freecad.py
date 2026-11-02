@@ -47,7 +47,7 @@ def cylinder_at_polar(radius, theta_deg, diameter, height, z):
 
 
 def jaw(theta_deg, z, open_state=False):
-    # Six rectilinear radial shoes. Outer fixed guide and cam pin are future work.
+    # Concept radial shoe with a forked roller mount under its outer half.
     inner = (P["gates"]["open_clear_aperture_diameter"] if open_state else
              P["gates"]["closed_clear_aperture_diameter"]) / 2
     g = P["gates"]
@@ -56,8 +56,46 @@ def jaw(theta_deg, z, open_state=False):
     thickness = g["jaw_thickness"]
     shape = Part.makeBox(length, width, thickness,
                          App.Vector(inner, -width/2, z + 8))
+    b = P["hardware"]["jaw_guide_bearing"]
+    axle_x = inner + length * 0.65
+    axle_z = z + 8 - b["outer_diameter"] / 2
+    # Two cheeks hold a 625 bearing between them; the axle is tangential,
+    # allowing the outer race to roll on a radial track beneath the shoe.
+    cheek_t = 2.5
+    cheek_radial = max(8.0, b["axle_clearance_hole_diameter"] + 2 * P["print"]["minimum_wall"])
+    cheek_bottom = axle_z - b["outer_diameter"] / 2 - 1.0
+    cheek_top = z + 8 + 4.0
+    cheek_h = cheek_top - cheek_bottom
+    holes = []
+    for y0 in (-b["width"] / 2 - cheek_t, b["width"] / 2):
+        cheek = Part.makeBox(cheek_radial, cheek_t, cheek_h,
+                             App.Vector(axle_x - cheek_radial/2, y0, cheek_bottom))
+        shape = shape.fuse(cheek)
+        holes.append(Part.makeCylinder(b["axle_clearance_hole_diameter"] / 2,
+                                       cheek_t + 0.4,
+                                       App.Vector(axle_x, y0 - 0.2, axle_z),
+                                       App.Vector(0, 1, 0)))
+    for bore in holes:
+        shape = shape.cut(bore)
+    shape = shape.removeSplitter()
     shape.rotate(App.Vector(0, 0, 0), App.Vector(0, 0, 1), theta_deg)
     return shape
+
+
+def jaw_bearing(theta_deg, z, index):
+    g, b = P["gates"], P["hardware"]["jaw_guide_bearing"]
+    inner = g["closed_clear_aperture_diameter"] / 2
+    axle_x = inner + g["jaw_radial_length"] * 0.65
+    axle_z = z + 8 - b["outer_diameter"] / 2
+    outer = Part.makeCylinder(b["outer_diameter"] / 2, b["width"],
+                              App.Vector(axle_x, -b["width"] / 2, axle_z),
+                              App.Vector(0, 1, 0))
+    bore = Part.makeCylinder(b["bore_diameter"] / 2, b["width"] + 0.4,
+                             App.Vector(axle_x, -b["width"] / 2 - 0.2, axle_z),
+                             App.Vector(0, 1, 0))
+    roller = outer.cut(bore)
+    roller.rotate(App.Vector(0, 0, 0), App.Vector(0, 0, 1), theta_deg)
+    return roller
 
 
 frame = P["frame"]
@@ -79,6 +117,13 @@ for index, z in enumerate(ring_z, 1):
     for j in range(gates["jaw_count"]):
         feature("T%d_support_shoe_%02d" % (index, j + 1),
                 jaw(j * 360 / gates["jaw_count"], z), color=(0.94, 0.64, 0.17))
+        angle = j * 360 / gates["jaw_count"]
+        feature("T%d_625_bearing_%02d_ENVELOPE" % (index, j + 1),
+                jaw_bearing(angle, z, j + 1), "envelope", (0.68, 0.70, 0.74))
+        rail = Part.makeBox(52, 10, 4, App.Vector(74, -5, z - 8 - 4))
+        rail.rotate(App.Vector(0, 0, 0), App.Vector(0, 0, 1), angle)
+        feature("T%d_radial_roller_rail_%02d_ENVELOPE" % (index, j + 1),
+                rail, "envelope", (0.25, 0.55, 0.42))
     # Annular volume reserved for a cam ring; details of grooves/teeth are pending.
     feature("T%d_cam_ring_ENVELOPE" % index,
             annulus(115, 99, 5, z + 15), "envelope", (0.7, 0.25, 0.2))
@@ -114,13 +159,19 @@ for j, angle in enumerate((45, 135, 225, 315), 1):
                               frame["structural_post_diameter"], gap + 8, 0),
             color=(0.56, 0.58, 0.62))
 for j, angle in enumerate((0, 90, 180, 270), 1):
-    # Printed radial bridge fixes each guide to the upper frame. Its M3 bore
-    # is a pilot only; fit to the actual brass fastener after a coupon.
+    # Radial slot lets each guide post move inward/outward for bowl tolerance.
     bridge = Part.makeBox(17, 16, 8, App.Vector(88, -8, gap))
     bridge.rotate(App.Vector(0, 0, 0), App.Vector(0, 0, 1), angle)
-    bore = cylinder_at_polar(frame["guide_post_pcd"] / 2, angle,
-                              P["hardware"]["printed_standoff_hole_pilot"], 10, gap - 1)
-    feature("guide_bridge_%d" % j, bridge.cut(bore),
+    slot_r = P["hardware"]["printed_standoff_hole_pilot"] / 2
+    slot_adjust = frame.get("guide_radial_adjustment_each_side", 3.0)
+    slot_x = frame["guide_post_pcd"] / 2
+    slot = Part.makeBox(2 * slot_adjust, 2 * slot_r, 10,
+                        App.Vector(slot_x - slot_adjust, -slot_r, gap - 1))
+    for x in (slot_x - slot_adjust, slot_x + slot_adjust):
+        slot = slot.fuse(Part.makeCylinder(slot_r, 10,
+                            App.Vector(x, 0, gap - 1)))
+    slot.rotate(App.Vector(0, 0, 0), App.Vector(0, 0, 1), angle)
+    feature("guide_bridge_%d" % j, bridge.cut(slot),
             color=(0.25, 0.38, 0.78))
     rod = cylinder_at_polar(frame["guide_post_pcd"] / 2, angle,
                             frame["guide_post_diameter"],
@@ -135,9 +186,30 @@ for j, angle in enumerate((0, 90, 180, 270), 1):
             cylinder_at_polar(frame["guide_post_pcd"] / 2, angle, 6, 15, gap + 3),
             "envelope", (0.83, 0.69, 0.28))
 
-# Bowl outer envelope, shown translucent in GUI. Not exported as printed hardware.
-feature("bowl_rim_ENVELOPE", Part.makeCylinder(175.7 / 2, 2,
-        App.Vector(0, 0, 16)), "envelope", (0.68, 0.85, 0.95))
+# Two lidded packages shown in the one-line transfer stack. The 75 mm
+# package pitch and lid envelope are estimates until the complete packs are measured.
+line1 = P["sales_lines"][0]
+body_h = P["bowl"]["height"]
+rim_r = P["bowl"]["rim_outer_diameter"] / 2
+base_r = P["bowl"]["base_outer_diameter"] / 2
+lid_r = line1["complete_package_max_diameter_estimate_mm"] / 2
+lid_h = line1["lid_top_protrusion_estimate_mm"]
+package_pitch = line1["estimated_package_stack_pitch_mm"]
+lower_package_z = 16 - body_h
+assert abs(package_pitch - P["gates"]["gate_center_spacing"]) < 1e-6, \
+    "Gate spacing must equal the package-to-package support pitch"
+lower_lid_top = lower_package_z + body_h + lid_h
+upper_package_bottom = lower_package_z + package_pitch
+assert abs(lower_lid_top - upper_package_bottom) < 1e-6, \
+    "Estimated upper package bottom must touch the lower package lid"
+for package_index, package_z in enumerate((lower_package_z, lower_package_z + package_pitch), 1):
+    body = Part.makeCone(base_r, rim_r, body_h, App.Vector(0, 0, package_z))
+    feature("L1_package_%d_body_ENVELOPE" % package_index,
+            body, "envelope", (0.68, 0.85, 0.95))
+    lid = Part.makeCylinder(lid_r, lid_h,
+                            App.Vector(0, 0, package_z + body_h))
+    feature("L1_package_%d_lid_ENVELOPE" % package_index,
+            lid, "envelope", (0.75, 0.9, 1.0))
 
 doc.recompute()
 assembly = ROOT / "cad" / "assembly" / "layout.FCStd"

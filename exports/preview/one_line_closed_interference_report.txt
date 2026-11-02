@@ -1,0 +1,3 @@
+objects=177
+stage1 major_pair_interference_mm3:
+stage2 major_pair_interference_mm3:

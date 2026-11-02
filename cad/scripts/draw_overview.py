@@ -43,7 +43,7 @@ svg += [
     f'<text x="310" y="165">4 trụ kết cấu Ø{f["structural_post_diameter"]} trên PCD {f["structural_post_pcd"]}</text>',
     f'<text x="310" y="195">4 thanh dẫn Ø{f["guide_post_diameter"]} trên PCD {f["guide_post_pcd"]}</text>',
     f'<text x="310" y="225">1 cột = 2 cơ chế giữ; cách tầng {g["gate_center_spacing"]} mm — phải đo bước lồng</text>',
-    '<text x="310" y="255">6 guốc/tầng; truyền động cam và chốt khóa chưa được thiết kế</text>',
+    '<text x="310" y="255">6 cánh bản lề/tầng; pin khóa lò xo và chặn cơ ở mức prototype</text>',
     '<text x="30" y="388">Màu xanh: khung; xanh nhạt nét đứt: miệng tô; cam: guốc đóng; xanh lá: thanh dẫn; xám: trụ kết cấu.</text>',
     '<text x="30" y="419">Tham số: requirements/parameters.json  |  Mô hình: cad/assembly/layout.FCStd  |  Kiểm chứng: simulation/validation/acceptance.md</text>',
     '</svg>']

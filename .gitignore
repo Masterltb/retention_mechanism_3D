@@ -11,3 +11,10 @@ BOM/*.sqlite-journal
 BOM/*.sqlite-wal
 BOM/*.sqlite-shm
 exports/renders/*.tmp
+
+# Superseded mixed-material prototype exports; PETG-only exports live in the dedicated folder.
+/exports/STL/pivot_*.stl
+/exports/preview/*.log
+/exports/preview/build_log.txt
+/exports/preview/view_macro_log.txt
+/exports/preview/one_line_interference_report.txt
